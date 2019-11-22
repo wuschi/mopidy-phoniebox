@@ -21,14 +21,14 @@ from mopidy.audio import PlaybackState
 
 import pykka
 
-logger = logging.getLogger(__name__)
-
 
 class IdleWatchdog(pykka.ThreadingActor, core.CoreListener):
     """
     Watches the playback state of mopidy and starts/cancels a shutdown timer
     accordingly.
     """
+    logger = logging.getLogger(__name__)
+
     def __init__(self, idle_time, controls):
         super(IdleWatchdog, self).__init__()
         self.idle_time = idle_time
@@ -40,7 +40,7 @@ class IdleWatchdog(pykka.ThreadingActor, core.CoreListener):
         Cancels the shutdown timer if present.
         """
         if self.timer is not None:
-            logger.info("cancelling shutdown timer")
+            self.logger.info("cancelling shutdown timer")
             self.timer.cancel()
             self.timer = None
 
@@ -49,8 +49,8 @@ class IdleWatchdog(pykka.ThreadingActor, core.CoreListener):
         Starts the shutdown timer.
         """
         if self.timer is not None:
-            logger.warn("starting timer altough previous one exists "
-                        + "- this shouldn't happen")
+            self.logger.warn("starting timer altough previous one exists "
+                             + "- this shouldn't happen")
             self.cancel_timer()
         self.timer = Timer(self.idle_time * 60, self.shutdown)
         self.timer.start()
@@ -62,13 +62,13 @@ class IdleWatchdog(pykka.ThreadingActor, core.CoreListener):
         changed to STOPPED or PAUSED and mopidy was playing previously, then
         the timer is started.
         """
-        logger.debug("playback state changed from %s to %s",
-                     old_state, new_state)
+        self.logger.debug("playback state changed from %s to %s",
+                          old_state, new_state)
         if new_state == PlaybackState.PLAYING:
             self.cancel_timer()
         elif old_state == PlaybackState.PLAYING or old_state is None:
-            logger.info("starting %s minute shutdown timer (state: %s)",
-                        self.idle_time, new_state)
+            self.logger.info("starting %s minute shutdown timer (state: %s)",
+                             self.idle_time, new_state)
             self.start_timer()
 
     def shutdown(self):
@@ -90,3 +90,4 @@ class IdleWatchdog(pykka.ThreadingActor, core.CoreListener):
         """
         if self.timer is not None:
             self.timer.cancel()
+            self.timer = None

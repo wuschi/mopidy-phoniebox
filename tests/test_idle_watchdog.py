@@ -56,6 +56,13 @@ class IdleWatchdogTest(unittest.TestCase):
         iw.cancel_timer()
         self.assertIsNone(iw.timer)
 
+        iw.start_timer()
+        self.assertIsNotNone(iw.timer)
+        iw.start_timer()
+        self.assertIsNotNone(iw.timer)
+        iw.cancel_timer()
+        self.assertIsNone(iw.timer)
+
     def test_playback_state_changed(self):
         controls = mock.Mock()
 
@@ -72,4 +79,35 @@ class IdleWatchdogTest(unittest.TestCase):
         self.assertIsNotNone(iw.timer)
 
         iw.playback_state_changed(PlaybackState.PAUSED, PlaybackState.PLAYING)
+        self.assertIsNone(iw.timer)
+
+    def test_on_start(self):
+        controls = mock.Mock()
+        future = mock.Mock()
+
+        controls.core.playback.get_state.return_value = future
+
+        iw = IdleWatchdog(1, controls)
+        future.get.return_value = PlaybackState.STOPPED
+        iw.on_start()
+        controls.core.playback.get_state.assert_called_once()
+        future.get.assert_called_once()
+        self.assertIsNotNone(iw.timer)
+        iw.cancel_timer()
+
+        future.reset_mock()
+        iw = IdleWatchdog(1, controls)
+        future.get.return_value = PlaybackState.PLAYING
+        iw.on_start()
+        future.get.assert_called_once()
+        self.assertIsNone(iw.timer)
+        iw.cancel_timer()
+
+    def test_on_stop(self):
+        controls = mock.Mock()
+
+        iw = IdleWatchdog(1, controls)
+        iw.start_timer()
+        self.assertIsNotNone(iw.timer)
+        iw.on_stop()
         self.assertIsNone(iw.timer)

@@ -10,3 +10,6 @@ eggs/
 *.egg-info/
 .installed.cfg
 *.egg
+.coverage
+.tox
+xunit-*.xml

@@ -34,6 +34,7 @@ class PhonieboxIdleTimerFrontend(pykka.ThreadingActor, core.CoreListener):
         self.core = core
         self.config = config['phoniebox-idletimer']
         self.controls = PhonieboxControls(core)
+        self.idle_watchdog = None
 
     def on_start(self):
         """

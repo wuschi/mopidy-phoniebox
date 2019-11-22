@@ -41,3 +41,4 @@ class PhonieboxControls:
         return_code = subprocess.call(["sudo", "/sbin/poweroff"])
         if return_code > 0:
             self.logger.error("error shutting down phoniebox: %s", return_code)
+        return return_code
