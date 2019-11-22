@@ -14,7 +14,7 @@ Install by running::
 Configuration
 =============
 
-The idle time after which the shutdown will be executed is configured in the ``mopidy.conf`` config file:
+The idle time after which the shutdown will be executed is configured in the ``mopidy.conf`` config file::
 
         [phoniebox-idletimer]
         enabled = true
@@ -27,7 +27,7 @@ Usage
 
 This extension will shutdown the machine when mopidy is not playing anything for ``idle_time_before_shutdown``
 minutes.
-The command ``/sbin/sudo /sbin poweroff`` will be executed for shutdown, so make sure that the user running mopidy has
+The command ``sudo /sbin/poweroff`` will be executed for shutdown, so make sure that the user running mopidy has
 permission to execute the poweroff command with sudo permissions.
 
 License
