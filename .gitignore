@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.Python
+env/
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+*.egg-info/
+.installed.cfg
+*.egg
