@@ -14,8 +14,9 @@
 #  limitations under the License.
 #
 import logging
-import pykka
 from threading import Timer
+
+import pykka
 
 from mopidy import core
 from mopidy.audio import PlaybackState

@@ -14,9 +14,9 @@
 #  limitations under the License.
 #
 from __future__ import unicode_literals
+import unittest
 
 import mock
-import unittest
 
 from mopidy_phoniebox_idletimer import Extension
 from mopidy_phoniebox_idletimer import frontend as frontend_lib

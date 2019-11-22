@@ -14,10 +14,11 @@
 #  limitations under the License.
 #
 import logging
+
+from mopidy import core
 import pykka
 
 from .controls import PhonieboxControls
-from mopidy import core
 
 
 class PhonieboxIdleTimerFrontend(pykka.ThreadingActor, core.CoreListener):
