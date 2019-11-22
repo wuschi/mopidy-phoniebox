@@ -15,8 +15,8 @@
 #
 from __future__ import unicode_literals
 
-import unittest
 import subprocess
+import unittest
 
 import mock
 
