@@ -16,6 +16,7 @@
 import logging
 
 from mopidy import core
+
 import pykka
 
 from .controls import PhonieboxControls

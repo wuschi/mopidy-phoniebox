@@ -16,10 +16,10 @@
 import logging
 from threading import Timer
 
-import pykka
-
 from mopidy import core
 from mopidy.audio import PlaybackState
+
+import pykka
 
 logger = logging.getLogger(__name__)
 

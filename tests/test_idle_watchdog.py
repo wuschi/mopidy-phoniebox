@@ -14,9 +14,11 @@
 #  limitations under the License.
 #
 from __future__ import unicode_literals
+
 import unittest
 
 import mock
+
 from mopidy.audio import PlaybackState
 
 from mopidy_phoniebox_idletimer.idle_watchdog import IdleWatchdog
