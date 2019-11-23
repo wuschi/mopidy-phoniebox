@@ -27,9 +27,9 @@ def get_version(filename):
 
 
 setup(
-    name='Mopidy-Phoniebox-Idletimer',
-    version=get_version('mopidy_phoniebox_idletimer/__init__.py'),
-    url='https://github.com/wuschi/mopidy-phoniebox-idletimer',
+    name='Mopidy-Phoniebox',
+    version=get_version('mopidy_phoniebox/__init__.py'),
+    url='https://github.com/wuschi/mopidy-phoniebox',
     license='Apache License, Version 2.0',
     author='Thomas Wunschel',
     description='Extension to shutdown phoniebox when mopidy is idle',
@@ -49,7 +49,7 @@ setup(
     ],
     entry_points={
         'mopidy.ext': [
-            'phoniebox-idletimer = mopidy_phoniebox_idletimer:Extension',
+            'phoniebox = mopidy_phoniebox:Extension',
         ],
     },
     classifiers=[

@@ -20,7 +20,7 @@ import unittest
 
 import mock
 
-from mopidy_phoniebox_idletimer.controls import PhonieboxControls
+from mopidy_phoniebox.controls import PhonieboxControls
 
 
 class PhonieboxControlsTest(unittest.TestCase):

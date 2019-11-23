@@ -26,11 +26,11 @@ __version__ = '0.1.0-dev'
 
 class Extension(ext.Extension):
     """
-    The phoniebox-idletimer extension for mopidy.
+    The phoniebox extension for mopidy.
     """
 
-    dist_name = 'Mopidy-Phoniebox-Idletimer'
-    ext_name = 'phoniebox-idletimer'
+    dist_name = 'Mopidy-Phoniebox'
+    ext_name = 'phoniebox'
     version = __version__
     logger = logging.getLogger(__name__)
 
@@ -53,8 +53,8 @@ class Extension(ext.Extension):
         """
         Registers this extension in mopidy.
         """
-        from .frontend import PhonieboxIdleTimerFrontend
-        registry.add('frontend', PhonieboxIdleTimerFrontend)
+        from .frontend import PhonieboxFrontend
+        registry.add('frontend', PhonieboxFrontend)
 
         # Or nothing to register e.g. command extension
         self.logger.info("Initialized %s version %s",

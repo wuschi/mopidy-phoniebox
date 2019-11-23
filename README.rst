@@ -1,5 +1,5 @@
 ****************************
-Mopidy-Phoniebox-Idletimer
+Mopidy-Phoniebox
 ****************************
 
 This mopidy extension shuts down the machine when mopidy is not playing anything for the configured time in minutes.
@@ -9,14 +9,14 @@ Installation
 
 Install by running::
 
-        pip install Mopidy-Phoniebox-Idletimer
+        pip install Mopidy-Phoniebox
 
 Configuration
 =============
 
 The idle time after which the shutdown will be executed is configured in the ``mopidy.conf`` config file::
 
-        [phoniebox-idletimer]
+        [phoniebox]
         enabled = true
 
         # idle time in minutes before shutdown is executed
@@ -51,8 +51,8 @@ License
 Project resources
 =================
 
-- `Source Code <https://github.com/wuschi/mopidy-phoniebox-idletimer>`__
-- `Issue tracker <https://github.com/wuschi/mopidy-phoniebox-idletimer/issues>`__
+- `Source Code <https://github.com/wuschi/mopidy-phoniebox>`__
+- `Issue tracker <https://github.com/wuschi/mopidy-phoniebox/issues>`__
  
 
 Credits

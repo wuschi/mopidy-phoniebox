@@ -22,7 +22,7 @@ import pykka
 from .controls import PhonieboxControls
 
 
-class PhonieboxIdleTimerFrontend(pykka.ThreadingActor, core.CoreListener):
+class PhonieboxFrontend(pykka.ThreadingActor, core.CoreListener):
     """
     Idle-Timer frontend.
     Creates an IdleWatchdog if idle_time_before_shutdown > 0.
@@ -30,9 +30,9 @@ class PhonieboxIdleTimerFrontend(pykka.ThreadingActor, core.CoreListener):
     logger = logging.getLogger(__name__)
 
     def __init__(self, config, core):
-        super(PhonieboxIdleTimerFrontend, self).__init__()
+        super(PhonieboxFrontend, self).__init__()
         self.core = core
-        self.config = config['phoniebox-idletimer']
+        self.config = config['phoniebox']
         self.controls = PhonieboxControls(core)
         self.idle_watchdog = None
 

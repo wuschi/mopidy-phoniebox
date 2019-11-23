@@ -19,8 +19,8 @@ import unittest
 
 import mock
 
-from mopidy_phoniebox_idletimer import Extension
-from mopidy_phoniebox_idletimer import frontend as frontend_lib
+from mopidy_phoniebox import Extension
+from mopidy_phoniebox import frontend as frontend_lib
 
 
 class ExtensionTest(unittest.TestCase):
@@ -29,7 +29,7 @@ class ExtensionTest(unittest.TestCase):
         ext = Extension()
         config = ext.get_default_config()
 
-        self.assertIn('[phoniebox-idletimer]', config)
+        self.assertIn('[phoniebox]', config)
         self.assertIn('enabled = true', config)
         self.assertIn('idle_time_before_shutdown = 0', config)
 
@@ -48,4 +48,4 @@ class ExtensionTest(unittest.TestCase):
 
         registry.add.assert_called_once_with(
                 'frontend',
-                frontend_lib.PhonieboxIdleTimerFrontend)
+                frontend_lib.PhonieboxFrontend)

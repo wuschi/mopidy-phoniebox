@@ -19,41 +19,41 @@ import unittest
 
 import mock
 
-from mopidy_phoniebox_idletimer.frontend import PhonieboxIdleTimerFrontend
+from mopidy_phoniebox.frontend import PhonieboxFrontend
 
 
 class PhonieboxControlsTest(unittest.TestCase):
 
     def test_init(self):
         core = mock.Mock()
-        config = {'phoniebox-idletimer': {'idle_time_before_shutdown': 0}}
+        config = {'phoniebox': {'idle_time_before_shutdown': 0}}
 
-        f = PhonieboxIdleTimerFrontend(config, core)
+        f = PhonieboxFrontend(config, core)
         self.assertIs(core, f.core)
-        self.assertIs(config['phoniebox-idletimer'], f.config)
+        self.assertIs(config['phoniebox'], f.config)
         self.assertIsNotNone(f.controls)
         self.assertIsNone(f.idle_watchdog)
 
     def test_on_start(self):
         core = mock.Mock()
-        config = {'phoniebox-idletimer': {'idle_time_before_shutdown': 0}}
+        config = {'phoniebox': {'idle_time_before_shutdown': 0}}
 
-        f = PhonieboxIdleTimerFrontend(config, core)
+        f = PhonieboxFrontend(config, core)
         f.on_start()
         self.assertIsNone(f.idle_watchdog)
 
-        config = {'phoniebox-idletimer': {'idle_time_before_shutdown': 100}}
-        f = PhonieboxIdleTimerFrontend(config, core)
+        config = {'phoniebox': {'idle_time_before_shutdown': 100}}
+        f = PhonieboxFrontend(config, core)
         f.on_start()
         self.assertIsNotNone(f.idle_watchdog)
         f.idle_watchdog.stop()
 
     def test_on_stop(self):
         core = mock.Mock()
-        config = {'phoniebox-idletimer': {'idle_time_before_shutdown': 100}}
+        config = {'phoniebox': {'idle_time_before_shutdown': 100}}
         iw = mock.Mock()
 
-        f = PhonieboxIdleTimerFrontend(config, core)
+        f = PhonieboxFrontend(config, core)
         f.idle_watchdog = iw
         f.on_stop()
         iw.stop.assert_called_once()

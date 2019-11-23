@@ -21,7 +21,7 @@ import mock
 
 from mopidy.audio import PlaybackState
 
-from mopidy_phoniebox_idletimer.idle_watchdog import IdleWatchdog
+from mopidy_phoniebox.idle_watchdog import IdleWatchdog
 
 
 class IdleWatchdogTest(unittest.TestCase):
