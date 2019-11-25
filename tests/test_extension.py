@@ -40,6 +40,9 @@ class ExtensionTest(unittest.TestCase):
         self.assertIn('enabled', schema)
         self.assertIn('idle_time_before_shutdown', schema)
 
+        for gpio in range(28):
+            self.assertIn('gpio{:d}'.format(gpio), schema)
+
     def test_setup(self):
         registry = mock.Mock()
 

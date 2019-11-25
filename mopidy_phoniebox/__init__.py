@@ -20,6 +20,8 @@ import os
 
 from mopidy import config, ext
 
+from .gpioconfig import GpioConfig
+
 
 __version__ = '0.1.0-dev'
 
@@ -47,6 +49,8 @@ class Extension(ext.Extension):
         """
         schema = super(Extension, self).get_config_schema()
         schema['idle_time_before_shutdown'] = config.Integer()
+        for gpio in range(28):
+            schema['gpio{:d}'.format(gpio)] = GpioConfig()
         return schema
 
     def setup(self, registry):
