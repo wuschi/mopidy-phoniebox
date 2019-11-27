@@ -16,6 +16,8 @@
 import logging
 import subprocess
 
+from mopidy.audio import PlaybackState
+
 
 class PhonieboxControls:
     """
@@ -42,3 +44,15 @@ class PhonieboxControls:
         if return_code > 0:
             self.logger.error("error shutting down phoniebox: %s", return_code)
         return return_code
+
+    def play_pause(self):
+        """
+        Toggle play/pause.
+        """
+        state = self.core.playback.get_state().get()
+        if state == PlaybackState.PLAYING:
+            self.core.playback.pause()
+        elif state == PlaybackState.PAUSED:
+            self.core.playback.resume()
+        else:
+            self.core.playback.play()

@@ -20,12 +20,14 @@ from mopidy import core
 import pykka
 
 from .controls import PhonieboxControls
+from .gpiocontroller import GpioController
 
 
 class PhonieboxFrontend(pykka.ThreadingActor, core.CoreListener):
     """
-    Idle-Timer frontend.
-    Creates an IdleWatchdog if idle_time_before_shutdown > 0.
+    Phoniebox frontend.
+    Creates an :class:`IdleWatchdog` if idle_time_before_shutdown > 0.
+    Initializes the :class:`GpioController`.
     """
     logger = logging.getLogger(__name__)
 
@@ -35,6 +37,7 @@ class PhonieboxFrontend(pykka.ThreadingActor, core.CoreListener):
         self.config = config['phoniebox']
         self.controls = PhonieboxControls(core)
         self.idle_watchdog = None
+        self.gpio_controller = GpioController(self.config, self.controls)
 
     def on_start(self):
         """

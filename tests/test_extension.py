@@ -43,6 +43,12 @@ class ExtensionTest(unittest.TestCase):
         for gpio in range(28):
             self.assertIn('gpio{:d}'.format(gpio), schema)
 
+        self.assertIn('play_pause', schema)
+        self.assertIn('prev', schema)
+        self.assertIn('next', schema)
+        self.assertIn('vol_down', schema)
+        self.assertIn('vol_up', schema)
+
     def test_setup(self):
         registry = mock.Mock()
 

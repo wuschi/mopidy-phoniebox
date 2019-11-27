@@ -20,6 +20,8 @@ import unittest
 
 import mock
 
+from mopidy.audio import PlaybackState
+
 from mopidy_phoniebox.controls import PhonieboxControls
 
 
@@ -30,6 +32,34 @@ class PhonieboxControlsTest(unittest.TestCase):
 
         ctrls = PhonieboxControls(core)
         self.assertIs(core, ctrls.core)
+
+    def test_play_pause(self):
+        core = mock.Mock()
+        future = mock.Mock()
+        core.playback.get_state.return_value = future
+
+        ctrls = PhonieboxControls(core)
+        future.get.return_value = PlaybackState.PLAYING
+        ctrls.play_pause()
+        core.playback.pause.assert_called_once()
+        core.playback.resume.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        core.reset_mock()
+        ctrls = PhonieboxControls(core)
+        future.get.return_value = PlaybackState.PAUSED
+        ctrls.play_pause()
+        core.playback.pause.assert_not_called()
+        core.playback.resume.assert_called_once()
+        core.playback.play.assert_not_called()
+
+        core.reset_mock()
+        ctrls = PhonieboxControls(core)
+        future.get.return_value = PlaybackState.STOPPED
+        ctrls.play_pause()
+        core.playback.pause.assert_not_called()
+        core.playback.resume.assert_not_called()
+        core.playback.play.assert_called_once()
 
     def test_shutdown(self):
         core = mock.Mock()

@@ -20,6 +20,7 @@ import os
 
 from mopidy import config, ext
 
+from .buttonconfig import ButtonConfig
 from .gpioconfig import GpioConfig
 
 
@@ -51,11 +52,19 @@ class Extension(ext.Extension):
         schema['idle_time_before_shutdown'] = config.Integer()
         for gpio in range(28):
             schema['gpio{:d}'.format(gpio)] = GpioConfig()
+        schema['play_pause'] = ButtonConfig()
+        schema['prev'] = ButtonConfig()
+        schema['next'] = ButtonConfig()
+        schema['vol_down'] = ButtonConfig()
+        schema['vol_up'] = ButtonConfig()
+
         return schema
 
     def setup(self, registry):
         """
         Registers this extension in mopidy.
+
+        :param registry: the mopidy registry
         """
         from .frontend import PhonieboxFrontend
         registry.add('frontend', PhonieboxFrontend)
