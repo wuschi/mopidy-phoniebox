@@ -112,7 +112,7 @@ class GpioControllerTest(unittest.TestCase):
 
         Device.pin_factory.reset()
         controller.gpios = [None] * 28
-        controller.config = {'gpio27': GpioConfig().deserialize("pull_up")}
+        controller.config = {'gpio27': GpioConfig().deserialize("pull_up,150")}
         controller.configure_gpios()
         for gpio in range(27):
             self.assertIsNone(controller.gpios[gpio])
