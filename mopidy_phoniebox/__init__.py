@@ -53,6 +53,7 @@ class Extension(ext.Extension):
         for gpio in range(28):
             schema['gpio{:d}'.format(gpio)] = GpioConfig()
         schema['play_pause'] = ButtonConfig()
+        schema['cdprev'] = ButtonConfig()
         schema['prev'] = ButtonConfig()
         schema['next'] = ButtonConfig()
         schema['vol_down'] = ButtonConfig()

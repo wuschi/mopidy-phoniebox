@@ -38,7 +38,7 @@ class PhonieboxControls:
         """
         Executes the phoniebox shutdown
         """
-        self.logger.info("executing phoniebox shutdown")
+        self.logger.info("PhonieboxControls.shutdown()")
         self.save_playback_state()
         return_code = subprocess.call(["sudo", "/sbin/poweroff"])
         if return_code > 0:
@@ -50,9 +50,84 @@ class PhonieboxControls:
         Toggle play/pause.
         """
         state = self.core.playback.get_state().get()
+        self.logger.info(
+                "PhonieboxControls.play_pause() - state {}".format(state))
         if state == PlaybackState.PLAYING:
             self.core.playback.pause()
         elif state == PlaybackState.PAUSED:
             self.core.playback.resume()
         else:
             self.core.playback.play()
+
+    def cd_previous(self):
+        """
+        Change to previous track Compact-Disc player style:
+        When current song is playing for > 3 secs, change to beginning of
+        current track, otherwise change to previous track.
+
+        If no track or the first track is played, jump to the last track of
+        the tracklist.
+        """
+        tl_len = self.core.tracklist.get_length().get()
+        track = self.core.playback.get_current_tl_track().get()
+        pos = self.core.playback.get_time_position().get()
+        if track is None:
+            tlid = 0
+        else:
+            tlid = track.tlid
+        self.logger.info(
+            ("PhonieboxControls.cd_previous() "
+             + "- track {} of {}, position {}").format(tlid, tl_len, pos))
+        if tl_len == 0:
+            return
+        if tlid == 0 or (tlid == 1 and pos < 3000):
+            self.core.playback.play(tlid=tl_len)
+        elif tlid > 1 and pos < 3000:
+            self.core.playback.previous()
+        else:
+            self.core.playback.seek(0)
+
+    def previous(self):
+        """
+        Change to previous track.
+
+        If no track or the first track is played, jump to the last track of
+        the tracklist.
+        """
+        tl_len = self.core.tracklist.get_length().get()
+        track = self.core.playback.get_current_tl_track().get()
+        if track is None:
+            tlid = 0
+        else:
+            tlid = track.tlid
+        self.logger.info(
+            "PhonieboxControls.previous() - track {} of {}".format(
+                tlid, tl_len))
+        if tl_len == 0:
+            return
+        if tlid > 1:
+            self.core.playback.previous()
+        else:
+            self.core.playback.play(tlid=tl_len)
+
+    def next(self):
+        """
+        Change to next track.
+
+        If no track or the last track is played, jump to the first track of
+        the tracklist.
+        """
+        tl_len = self.core.tracklist.get_length().get()
+        track = self.core.playback.get_current_tl_track().get()
+        if track is None:
+            tlid = 0
+        else:
+            tlid = track.tlid
+        self.logger.info(
+            "PhonieboxControls.next() - track {} of {}".format(tlid, tl_len))
+        if tl_len == 0:
+            return
+        if tlid == 0 or tlid >= tl_len:
+            self.core.playback.play(tlid=1)
+        else:
+            self.core.playback.next()

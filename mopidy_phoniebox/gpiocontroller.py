@@ -79,6 +79,21 @@ class GpioController:
         except ValueError as e:
             self.logger.error(str(e))
 
+        try:
+            self.configure_button("cdprev", self.controls.cd_previous)
+        except ValueError as e:
+            self.logger.error(str(e))
+
+        try:
+            self.configure_button("prev", self.controls.previous)
+        except ValueError as e:
+            self.logger.error(str(e))
+
+        try:
+            self.configure_button("next", self.controls.next)
+        except ValueError as e:
+            self.logger.error(str(e))
+
     def configure_button(self, fn_type, fn):
         """
         Configures a single button function.

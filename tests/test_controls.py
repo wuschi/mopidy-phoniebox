@@ -21,6 +21,7 @@ import unittest
 import mock
 
 from mopidy.audio import PlaybackState
+from mopidy.models import TlTrack
 
 from mopidy_phoniebox.controls import PhonieboxControls
 
@@ -60,6 +61,150 @@ class PhonieboxControlsTest(unittest.TestCase):
         core.playback.pause.assert_not_called()
         core.playback.resume.assert_not_called()
         core.playback.play.assert_called_once()
+
+    def test_cd_previous(self):
+        core = mock.Mock()
+        future = mock.Mock()
+        core.playback.get_time_position.return_value = future
+        future_tl_track = mock.Mock()
+        core.playback.get_current_tl_track.return_value = future_tl_track
+        future_tl = mock.Mock()
+        core.tracklist.get_length.return_value = future_tl
+        future_tl.get.return_value = 3
+
+        ctrls = PhonieboxControls(core)
+        future.get.return_value = 1000
+        future_tl_track.get.return_value = TlTrack(2, None)
+        ctrls.cd_previous()
+        core.playback.previous.assert_called_once()
+        core.playback.seek.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        core.reset_mock()
+        ctrls = PhonieboxControls(core)
+        future.get.return_value = 1000
+        future_tl_track.get.return_value = TlTrack(1, None)
+        ctrls.cd_previous()
+        core.playback.previous.assert_not_called()
+        core.playback.seek.assert_not_called()
+        core.playback.play.assert_called_with(tlid=3)
+
+        core.reset_mock()
+        future.get.return_value = 4000
+        future_tl_track.get.return_value = TlTrack(2, None)
+        ctrls.cd_previous()
+        core.playback.previous.assert_not_called()
+        core.playback.seek.assert_called_with(0)
+        core.playback.play.assert_not_called()
+
+        future_tl.get.return_value = 0
+        core.reset_mock()
+        future.get.return_value = 4000
+        future_tl_track.get.return_value = None
+        ctrls.cd_previous()
+        core.playback.previous.assert_not_called()
+        core.playback.seek.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        future_tl.get.return_value = 0
+        core.reset_mock()
+        future.get.return_value = 4000
+        future_tl_track.get.return_value = TlTrack(1, None)
+        ctrls.cd_previous()
+        core.playback.previous.assert_not_called()
+        core.playback.seek.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        future_tl.get.return_value = 3
+        core.reset_mock()
+        future.get.return_value = 4000
+        future_tl_track.get.return_value = None
+        ctrls.cd_previous()
+        core.playback.previous.assert_not_called()
+        core.playback.seek.assert_not_called()
+        core.playback.play.assert_called_with(tlid=3)
+
+    def test_previous(self):
+        core = mock.Mock()
+        future_tl_track = mock.Mock()
+        core.playback.get_current_tl_track.return_value = future_tl_track
+        future_tl = mock.Mock()
+        core.tracklist.get_length.return_value = future_tl
+        future_tl.get.return_value = 3
+
+        ctrls = PhonieboxControls(core)
+        future_tl_track.get.return_value = TlTrack(2, None)
+        ctrls.previous()
+        core.playback.previous.assert_called_once()
+        core.playback.seek.assert_not_called()
+
+        core.reset_mock()
+        future_tl_track.get.return_value = TlTrack(1, None)
+        ctrls.previous()
+        core.playback.previous.assert_not_called()
+        core.playback.play.assert_called_with(tlid=3)
+
+        future_tl.get.return_value = 0
+        core.reset_mock()
+        future_tl_track.get.return_value = None
+        ctrls.previous()
+        core.playback.previous.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        future_tl.get.return_value = 0
+        core.reset_mock()
+        future_tl_track.get.return_value = TlTrack(1, None)
+        ctrls.previous()
+        core.playback.previous.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        future_tl.get.return_value = 3
+        core.reset_mock()
+        future_tl_track.get.return_value = None
+        ctrls.previous()
+        core.playback.previous.assert_not_called()
+        core.playback.play.assert_called_with(tlid=3)
+
+    def test_next(self):
+        core = mock.Mock()
+        future_tl_track = mock.Mock()
+        future_tl = mock.Mock()
+        core.playback.get_current_tl_track.return_value = future_tl_track
+        core.tracklist.get_length.return_value = future_tl
+        future_tl.get.return_value = 3
+
+        ctrls = PhonieboxControls(core)
+        future_tl_track.get.return_value = TlTrack(2, None)
+        ctrls.next()
+        core.playback.next.assert_called_once()
+        core.playback.play.assert_not_called()
+
+        core.reset_mock()
+        future_tl_track.get.return_value = TlTrack(3, None)
+        ctrls.next()
+        core.playback.next.assert_not_called()
+        core.playback.play.assert_called_with(tlid=1)
+
+        future_tl.get.return_value = 1
+        core.reset_mock()
+        future_tl_track.get.return_value = None
+        ctrls.next()
+        core.playback.next.assert_not_called()
+        core.playback.play.assert_called_with(tlid=1)
+
+        future_tl.get.return_value = 0
+        core.reset_mock()
+        future_tl_track.get.return_value = None
+        ctrls.next()
+        core.playback.next.assert_not_called()
+        core.playback.play.assert_not_called()
+
+        future_tl.get.return_value = 0
+        core.reset_mock()
+        future_tl_track.get.return_value = TlTrack(1, None)
+        ctrls.next()
+        core.playback.next.assert_not_called()
+        core.playback.play.assert_not_called()
 
     def test_shutdown(self):
         core = mock.Mock()

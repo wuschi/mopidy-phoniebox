@@ -161,8 +161,27 @@ class GpioControllerTest(unittest.TestCase):
 
         controller.configure_button = mock.Mock()
         controller.configure_buttons()
-        controller.configure_button.assert_called_with('play_pause',
-                                                       controls.play_pause)
+        controller.configure_button.assert_has_calls(
+            [
+                mock.call('play_pause', controls.play_pause),
+                mock.call('cdprev', controls.cd_previous),
+                mock.call('prev', controls.previous),
+                mock.call('next', controls.next)
+            ]
+        )
+
+        # assert all configure_button() are called even when ValueErrors raised
+        controller.configure_button = mock.Mock()
+        controller.configure_button.side_effect = ValueError
+        controller.configure_buttons()
+        controller.configure_button.assert_has_calls(
+            [
+                mock.call('play_pause', controls.play_pause),
+                mock.call('cdprev', controls.cd_previous),
+                mock.call('prev', controls.previous),
+                mock.call('next', controls.next)
+            ]
+        )
 
     def test_configure_button(self):
         controls = mock.Mock()

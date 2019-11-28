@@ -4,7 +4,7 @@ Mopidy-Phoniebox
 
 A phoniebox / jukebox4kids extension for mopidy.
 
-If you have no idea what a phoniebox is, please have a look at the `project resources <#projectresources>`__.
+If you have no idea what a phoniebox is, please have a look at the `project resources <#project-resources>`__.
 
 Currently the following features are implemented:
 
@@ -34,8 +34,14 @@ Example Configuration
         idle_time_before_shutdown = 10
 
         # configure GPIO 26 as pulled high with 50 ms debounce time
-        gpio26 = pull_up,50
+        gpio20 = pull_up,50
+        gpio21 = pull_up,50
+        gpio26 = pull_up,none,1,false
         
+        # when GPIO 20 is pressed, jump to previous track (CD-player style)
+        cdprev = gpio20,when_pressed
+        # when GPIO 21 is pressed, jump to next track
+        next = gpio21,when_pressed
         # when GPIO 26 is pressed, trigger the play_pause function
         play_pause = gpio26,when_pressed
 
@@ -67,6 +73,33 @@ Configuration Options
 
 ``play_pause=gpio<N>,<action>``
     Configure the GPIO button function for toggling play/resume in mopidy.
+
+    ``gpio<N>``
+        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+
+    ``action=[when_pressed|when_held]``
+        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+
+``prev=gpio<N>,<action>``
+    Configure the GPIO button function for jumping to previous track.
+
+    ``gpio<N>``
+        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+
+    ``action=[when_pressed|when_held]``
+        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+
+``cdprev=gpio<N>,<action>``
+    Configure the GPIO button function for jumping to previous track in Compact-Disc player style: When current song is playing for more than 3 seconds then jump to beginning of current track. Only jump to previous track when playing for less than 3 seconds. 
+
+    ``gpio<N>``
+        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+
+    ``action=[when_pressed|when_held]``
+        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+
+``next=gpio<N>,<action>``
+    Configure the GPIO button function for jumping to next track.
 
     ``gpio<N>``
         **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
