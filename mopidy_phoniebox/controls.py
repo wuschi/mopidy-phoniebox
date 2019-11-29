@@ -28,18 +28,11 @@ class PhonieboxControls:
     def __init__(self, core):
         self.core = core
 
-    def save_playback_state(self):
-        """
-        Saves the current playback state. Not implemented yet.
-        """
-        pass
-
     def shutdown(self):
         """
         Executes the phoniebox shutdown
         """
         self.logger.info("PhonieboxControls.shutdown()")
-        self.save_playback_state()
         return_code = subprocess.call(["sudo", "/sbin/poweroff"])
         if return_code > 0:
             self.logger.error("error shutting down phoniebox: %s", return_code)
@@ -131,3 +124,31 @@ class PhonieboxControls:
             self.core.playback.play(tlid=1)
         else:
             self.core.playback.next()
+
+    def volume_up(self):
+        """
+        Increase the volume by 5.
+        """
+        volume = self.core.mixer.get_volume().get()
+        self.logger.info(
+            "PhonieboxControls.volume_up() - current vol {}".format(volume))
+        if volume is None:
+            volume = 50
+
+        volume += 5
+        volume = min(volume, 100)
+        self.core.mixer.set_volume(volume)
+
+    def volume_down(self):
+        """
+        Decrease the volume by 5.
+        """
+        volume = self.core.mixer.get_volume().get()
+        self.logger.info(
+            "PhonieboxControls.volume_down() - current vol {}".format(volume))
+        if volume is None:
+            volume = 50
+
+        volume -= 5
+        volume = max(volume, 0)
+        self.core.mixer.set_volume(volume)

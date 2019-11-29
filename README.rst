@@ -4,12 +4,12 @@ Mopidy-Phoniebox
 
 A phoniebox / jukebox4kids extension for mopidy.
 
-If you have no idea what a phoniebox is, please have a look at the `project resources <#project-resources>`__.
+If you have no idea what a phoniebox is, please have a look at the `external resources <#external-resources>`__.
 
 Currently the following features are implemented:
 
 - an idle watchdog which shuts down the machine when not playing for a defined amount of minutes
-- support for playback controls via GPIO buttons
+- support for playback and volume controls via GPIO buttons
 
 Installation
 ============
@@ -71,6 +71,15 @@ Configuration Options
     ``hold_repeat=[true|false]``
         **Optional**. If ``true``, then the ``when_held`` function assigned to the GPIO is triggered every ``hold_time`` seconds while held. If ``false`` (the default) the ``when_held`` function will only be triggered once per hold.
 
+``shutdown=gpio<N>,<action>``
+    Configure the GPIO button function for shutdown of the phoniebox.
+
+    ``gpio<N>``
+        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+
+    ``action=[when_pressed|when_held]``
+        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+
 ``play_pause=gpio<N>,<action>``
     Configure the GPIO button function for toggling play/resume in mopidy.
 
@@ -107,6 +116,24 @@ Configuration Options
     ``action=[when_pressed|when_held]``
         **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
 
+``vol_down=gpio<N>,<action>``
+    Configure the GPIO button function for decreasing the volume.
+
+    ``gpio<N>``
+        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+
+    ``action=[when_pressed|when_held]``
+        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+
+``vol_up=gpio<N>,<action>``
+    Configure the GPIO button function for increasing the volume.
+
+    ``gpio<N>``
+        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+
+    ``action=[when_pressed|when_held]``
+        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+
 
 License
 =============
@@ -131,11 +158,14 @@ License
 Project resources
 =================
 
-- `Phoniebox information <http://phoniebox.de>`__
-- `jukebox4kids discussion forum <https://forum-raspberrypi.de/forum/thread/13144-projekt-jukebox4kids-jukebox-fuer-kinder/>`__
 - `Source Code <https://github.com/wuschi/mopidy-phoniebox>`__
 - `Issue tracker <https://github.com/wuschi/mopidy-phoniebox/issues>`__
  
+External resources
+==================
+
+- `Phoniebox information <http://phoniebox.de>`__
+- `jukebox4kids discussion forum <https://forum-raspberrypi.de/forum/thread/13144-projekt-jukebox4kids-jukebox-fuer-kinder/>`__
 
 Credits
 =======

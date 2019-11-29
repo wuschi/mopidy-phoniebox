@@ -75,6 +75,11 @@ class GpioController:
         Configures all button functions.
         """
         try:
+            self.configure_button("shutdown", self.controls.shutdown)
+        except ValueError as e:
+            self.logger.error(str(e))
+
+        try:
             self.configure_button("play_pause", self.controls.play_pause)
         except ValueError as e:
             self.logger.error(str(e))
@@ -91,6 +96,16 @@ class GpioController:
 
         try:
             self.configure_button("next", self.controls.next)
+        except ValueError as e:
+            self.logger.error(str(e))
+
+        try:
+            self.configure_button("vol_down", self.controls.volume_down)
+        except ValueError as e:
+            self.logger.error(str(e))
+
+        try:
+            self.configure_button("vol_up", self.controls.volume_up)
         except ValueError as e:
             self.logger.error(str(e))
 

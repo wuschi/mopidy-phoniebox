@@ -43,6 +43,7 @@ class ExtensionTest(unittest.TestCase):
         for gpio in range(28):
             self.assertIn('gpio{:d}'.format(gpio), schema)
 
+        self.assertIn('shutdown', schema)
         self.assertIn('play_pause', schema)
         self.assertIn('prev', schema)
         self.assertIn('next', schema)

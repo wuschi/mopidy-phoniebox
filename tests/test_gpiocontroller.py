@@ -163,10 +163,13 @@ class GpioControllerTest(unittest.TestCase):
         controller.configure_buttons()
         controller.configure_button.assert_has_calls(
             [
+                mock.call('shutdown', controls.shutdown),
                 mock.call('play_pause', controls.play_pause),
                 mock.call('cdprev', controls.cd_previous),
                 mock.call('prev', controls.previous),
-                mock.call('next', controls.next)
+                mock.call('next', controls.next),
+                mock.call('vol_down', controls.volume_down),
+                mock.call('vol_up', controls.volume_up)
             ]
         )
 
@@ -176,10 +179,13 @@ class GpioControllerTest(unittest.TestCase):
         controller.configure_buttons()
         controller.configure_button.assert_has_calls(
             [
+                mock.call('shutdown', controls.shutdown),
                 mock.call('play_pause', controls.play_pause),
                 mock.call('cdprev', controls.cd_previous),
                 mock.call('prev', controls.previous),
-                mock.call('next', controls.next)
+                mock.call('next', controls.next),
+                mock.call('vol_down', controls.volume_down),
+                mock.call('vol_up', controls.volume_up)
             ]
         )
 

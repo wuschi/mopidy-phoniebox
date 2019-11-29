@@ -206,6 +206,46 @@ class PhonieboxControlsTest(unittest.TestCase):
         core.playback.next.assert_not_called()
         core.playback.play.assert_not_called()
 
+    def test_volume_up(self):
+        core = mock.Mock()
+        future_vol = mock.Mock()
+        core.mixer.get_volume.return_value = future_vol
+
+        ctrls = PhonieboxControls(core)
+        future_vol.get.return_value = None
+        ctrls.volume_up()
+        core.mixer.set_volume.asert_called_with(55)
+
+        core.reset_mock()
+        future_vol.get.return_value = 80
+        ctrls.volume_up()
+        core.mixer.set_volume.assert_called_with(85)
+
+        core.reset_mock()
+        future_vol.get.return_value = 100
+        ctrls.volume_up()
+        core.mixer.set_volume.assert_called_with(100)
+
+    def test_volume_down(self):
+        core = mock.Mock()
+        future_vol = mock.Mock()
+        core.mixer.get_volume.return_value = future_vol
+
+        ctrls = PhonieboxControls(core)
+        future_vol.get.return_value = None
+        ctrls.volume_down()
+        core.mixer.set_volume.asert_called_with(45)
+
+        core.reset_mock()
+        future_vol.get.return_value = 80
+        ctrls.volume_down()
+        core.mixer.set_volume.assert_called_with(75)
+
+        core.reset_mock()
+        future_vol.get.return_value = 0
+        ctrls.volume_down()
+        core.mixer.set_volume.assert_called_with(0)
+
     def test_shutdown(self):
         core = mock.Mock()
         ctrls = PhonieboxControls(core)

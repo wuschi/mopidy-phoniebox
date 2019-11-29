@@ -52,6 +52,7 @@ class Extension(ext.Extension):
         schema['idle_time_before_shutdown'] = config.Integer()
         for gpio in range(28):
             schema['gpio{:d}'.format(gpio)] = GpioConfig()
+        schema['shutdown'] = ButtonConfig()
         schema['play_pause'] = ButtonConfig()
         schema['cdprev'] = ButtonConfig()
         schema['prev'] = ButtonConfig()
