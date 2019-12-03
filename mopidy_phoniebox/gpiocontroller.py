@@ -26,12 +26,23 @@ class GpioController:
     controls = None
     gpios = None
     logger = logging.getLogger(__name__)
+    fn_mapping = None
+    
 
     def __init__(self, config, controls):
         self.config = config
         self.controls = controls
         self.gpios = [None] * 28
 
+        self.fn_mapping = {
+            "shutdown": self.controls.shutdown,
+            "play_pause": self.controls.play_pause,
+            "cdprev": self.controls.cd_previous,
+            "prev": self.controls.previous,
+            "next": self.controls.next,
+            "vol_down": self.controls.volume_down,
+            "vol_up": self.controls.volume_up
+        }
         self.configure_gpios()
         self.configure_buttons()
 
@@ -74,72 +85,55 @@ class GpioController:
         """
         Configures all button functions.
         """
-        try:
-            self.configure_button("shutdown", self.controls.shutdown)
-        except ValueError as e:
-            self.logger.error(str(e))
+        for gpio in range(28):
+            for action in "when_pressed", "when_held":
+                try:
+                    self.configure_button(gpio, action)
+                except ValueError as e:
+                    self.logger.error(str(e))
 
-        try:
-            self.configure_button("play_pause", self.controls.play_pause)
-        except ValueError as e:
-            self.logger.error(str(e))
-
-        try:
-            self.configure_button("cdprev", self.controls.cd_previous)
-        except ValueError as e:
-            self.logger.error(str(e))
-
-        try:
-            self.configure_button("prev", self.controls.previous)
-        except ValueError as e:
-            self.logger.error(str(e))
-
-        try:
-            self.configure_button("next", self.controls.next)
-        except ValueError as e:
-            self.logger.error(str(e))
-
-        try:
-            self.configure_button("vol_down", self.controls.volume_down)
-        except ValueError as e:
-            self.logger.error(str(e))
-
-        try:
-            self.configure_button("vol_up", self.controls.volume_up)
-        except ValueError as e:
-            self.logger.error(str(e))
-
-    def configure_button(self, fn_type, fn):
+    def configure_button(self, gpio, action):
         """
         Configures a single button function.
 
-        :param fn_type: the button function type
-        :param fn: the function to execute when the button is pressed
+        :param gpio: the gpio number
+        :param action: the action to configure (when_pressed or when_held)
         """
-        try:
-            btn_conf = self.config[fn_type]
-        except KeyError:
-            btn_conf = None
 
-        if btn_conf is None:
+        key = "gpio{:d}.{}".format(gpio, action)
+        try:
+            fn_type = self.config[key]
+        except KeyError:
+            fn_type = None
+
+        if fn_type is None:
             return
 
-        btn = self.gpios[btn_conf.gpio]
+        try:
+            fn = self.fn_mapping[fn_type.strip()]
+        except KeyError:
+            raise ValueError(
+                    "cannot assign gpio{:d}.{}: unknown fn type '{}'".format(
+                        gpio, action, fn_type))
+
+        btn = self.gpios[gpio]
         if btn is None:
-            raise ValueError(("cannot configure {} button"
-                              + " - gpio {:d} not configured").format(
-                                  fn_type, btn_conf.gpio))
-        if btn_conf.action == 'when_pressed':
+            raise ValueError(("cannot configure {:d}.{}"
+                              + " - gpio{:d} not configured").format(
+                                  gpio, action, gpio))
+
+        if action == 'when_pressed':
             if btn.when_pressed is not None:
-                raise ValueError(("cannot assign action when_pressed for {}: "
-                                  + "gpio {:d} already assigned").format(
-                                      fn_type, btn_conf.gpio))
+                raise ValueError(("cannot assign {} to gpio{:d}.when_pressed:"
+                                  + " already assigned").format(
+                                      fn_type, gpio))
             btn.when_pressed = lambda: fn()
-        elif btn_conf.action == 'when_held':
+        elif action == 'when_held':
             if btn.when_held is not None:
-                raise ValueError(("cannot assign action when_held for {}: "
-                                  + "gpio {:d} already assigned").format(
-                                      fn_type, btn_conf.gpio))
+                raise ValueError(("cannot assign {} to gpio{:d}.when_held:"
+                                  + " already assigned").format(
+                                      fn_type, gpio))
             btn.when_held = lambda: fn()
-        self.logger.info("{} assigned to gpio {} ({})".format(
-            fn_type, btn_conf.gpio, btn_conf.action))
+
+        self.logger.info("{} assigned to gpio{:d}.{}".format(
+            fn_type, gpio, action))

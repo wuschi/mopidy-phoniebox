@@ -33,17 +33,18 @@ Example Configuration
         # shut down phoniebox after not playing for 10 minutes
         idle_time_before_shutdown = 10
 
-        # configure GPIO 26 as pulled high with 50 ms debounce time
+        # configure GPIO 20 as pulled high with 50 ms debounce time
         gpio20 = pull_up,50
-        gpio21 = pull_up,50
-        gpio26 = pull_up,none,1,false
-        
         # when GPIO 20 is pressed, jump to previous track (CD-player style)
-        cdprev = gpio20,when_pressed
+        gpio20.when_pressed = cdprev
+        # configure GPIO 21 as pulled high with 50 ms debounce time
+        gpio21 = pull_up,50
         # when GPIO 21 is pressed, jump to next track
-        next = gpio21,when_pressed
+        gpio21.when_pressed = next
+        # configure GPIO 26 as pulled high with no debounce time, 0.5 seconds hold time and no repeat on hold
+        gpio26 = pull_up,none,0.5,false
         # when GPIO 26 is pressed, trigger the play_pause function
-        play_pause = gpio26,when_pressed
+        gpio26.when_pressed = play_pause
 
 Configuration Options
 ---------------------
@@ -71,68 +72,29 @@ Configuration Options
     ``hold_repeat=[true|false]``
         **Optional**. If ``true``, then the ``when_held`` function assigned to the GPIO is triggered every ``hold_time`` seconds while held. If ``false`` (the default) the ``when_held`` function will only be triggered once per hold.
 
-``shutdown=gpio<N>,<action>``
-    Configure the GPIO button function for shutdown of the phoniebox.
+``gpio<N>.when_pressed=<function_type>`` / ``gpio<N>.when_held=<function_type>``
+    Configure the GPIO pin number ``<N>`` function type when the button is pressed or held. Valid values for ``<function_type>`` are:
 
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+    ``shutdown``
+        Shutdown the phoniebox.
 
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+    ``play_pause``
+        Toggle pause / resume in mopidy.
 
-``play_pause=gpio<N>,<action>``
-    Configure the GPIO button function for toggling play/resume in mopidy.
+    ``prev``
+        Jump to previous track.
 
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
+    ``cdprev``
+        Jump to previous track in Compact Disc player style: When current track is playing for more than 3 seconds then jump to beginning of current track. Jump to previous track when current track is playing for less than 3 seconds.
 
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+    ``next``
+        Jump to next track.
 
-``prev=gpio<N>,<action>``
-    Configure the GPIO button function for jumping to previous track.
+    ``vol_down``
+        Decrease playback volume.
 
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
-
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
-
-``cdprev=gpio<N>,<action>``
-    Configure the GPIO button function for jumping to previous track in Compact-Disc player style: When current song is playing for more than 3 seconds then jump to beginning of current track. Only jump to previous track when playing for less than 3 seconds. 
-
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
-
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
-
-``next=gpio<N>,<action>``
-    Configure the GPIO button function for jumping to next track.
-
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
-
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
-
-``vol_down=gpio<N>,<action>``
-    Configure the GPIO button function for decreasing the volume.
-
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
-
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
-
-``vol_up=gpio<N>,<action>``
-    Configure the GPIO button function for increasing the volume.
-
-    ``gpio<N>``
-        **Mandatory**. The GPIO pin the button is connected to. The GPIO also has to be configured within the extension (see above).
-
-    ``action=[when_pressed|when_held]``
-        **Mandatory**. Whether to trigger the function when the button is pressed (``when_pressed``) or held (``when_held``).
+    ``vol_down``
+        Increase playback volume.
 
 
 License
