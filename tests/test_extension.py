@@ -45,7 +45,6 @@ class ExtensionTest(unittest.TestCase):
             self.assertIn('gpio{:d}.when_pressed'.format(gpio), schema)
             self.assertIn('gpio{:d}.when_held'.format(gpio), schema)
 
-
     def test_setup(self):
         registry = mock.Mock()
 

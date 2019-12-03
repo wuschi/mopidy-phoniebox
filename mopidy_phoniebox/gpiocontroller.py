@@ -27,7 +27,6 @@ class GpioController:
     gpios = None
     logger = logging.getLogger(__name__)
     fn_mapping = None
-    
 
     def __init__(self, config, controls):
         self.config = config
@@ -86,7 +85,7 @@ class GpioController:
         Configures all button functions.
         """
         for gpio in range(28):
-            for action in "when_pressed", "when_held":
+            for action in "when_pressed", "when_released", "when_held":
                 try:
                     self.configure_button(gpio, action)
                 except ValueError as e:
@@ -128,6 +127,12 @@ class GpioController:
                                   + " already assigned").format(
                                       fn_type, gpio))
             btn.when_pressed = lambda: fn()
+        elif action == 'when_released':
+            if btn.when_released is not None:
+                raise ValueError(("cannot assign {} to gpio{:d}.when_released:"
+                                  + " already assigned").format(
+                                      fn_type, gpio))
+            btn.when_released = lambda: fn()
         elif action == 'when_held':
             if btn.when_held is not None:
                 raise ValueError(("cannot assign {} to gpio{:d}.when_held:"

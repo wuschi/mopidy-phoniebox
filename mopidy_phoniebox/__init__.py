@@ -51,8 +51,12 @@ class Extension(ext.Extension):
         schema['idle_time_before_shutdown'] = config.Integer()
         for gpio in range(28):
             schema['gpio{:d}'.format(gpio)] = GpioConfig()
-            schema['gpio{:d}.when_pressed'.format(gpio)] = config.String()
-            schema['gpio{:d}.when_held'.format(gpio)] = config.String()
+            schema['gpio{:d}.when_pressed'.format(gpio)] = config.String(
+                    optional=True)
+            schema['gpio{:d}.when_released'.format(gpio)] = config.String(
+                    optional=True)
+            schema['gpio{:d}.when_held'.format(gpio)] = config.String(
+                    optional=True)
 
         return schema
 
