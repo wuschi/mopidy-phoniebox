@@ -73,7 +73,8 @@ Configuration Options
         **Optional**. If ``true``, then the ``when_held`` function assigned to the GPIO is triggered every ``hold_time`` seconds while held. If ``false`` (the default) the ``when_held`` function will only be triggered once per hold.
 
 ``gpio<N>.when_pressed=<function_type>`` / ``gpio<N>.when_released=<function_type>`` / ``gpio<N>.when_held=<function_type>``
-    Configure the GPIO pin number ``<N>`` function type when the button is pressed / released / held. Valid values for ``<function_type>`` are:
+    Configure the GPIO pin number ``<N>`` function type when the button is pressed / released / held. The ``when_released`` function is only executed when there is no ``when_held`` function assigned to the same button or when the button was not held before being released.
+    Valid values for ``<function_type>`` are:
 
     ``shutdown``
         Shutdown the phoniebox.

@@ -424,3 +424,33 @@ class GpioControllerTest(unittest.TestCase):
         controller.config = {'gpio0.when_released': 'play_pause'}
         with self.assertRaises(ValueError):
             controller.configure_button(0, 'when_released')
+
+    def test_on_held(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        Device.pin_factory.reset()
+        btn = Button(0)
+        controller.on_held(btn, controls.some_fn)
+        self.assertTrue(btn.was_held)
+        controls.some_fn.assert_called_once()
+
+    def test_on_released(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        Device.pin_factory.reset()
+        btn = Button(0)
+        self.assertFalse(btn.was_held)
+        controller.on_released(btn, controls.some_fn)
+        self.assertFalse(btn.was_held)
+        controls.some_fn.assert_called_once()
+
+        controls.reset_mock()
+        Device.pin_factory.reset()
+        btn.was_held = True
+        controller.on_released(btn, controls.some_fn)
+        self.assertFalse(btn.was_held)
+        controls.some_fn.assert_not_called()

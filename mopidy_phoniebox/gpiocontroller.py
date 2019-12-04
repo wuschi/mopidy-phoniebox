@@ -22,6 +22,7 @@ class GpioController:
     """
     Sets up gpios and button functions
     """
+    Button.was_held = False
     config = None
     controls = None
     gpios = None
@@ -132,13 +133,40 @@ class GpioController:
                 raise ValueError(("cannot assign {} to gpio{:d}.when_released:"
                                   + " already assigned").format(
                                       fn_type, gpio))
-            btn.when_released = lambda: fn()
+            btn.when_released = lambda btn: self.on_released(btn, fn)
         elif action == 'when_held':
             if btn.when_held is not None:
                 raise ValueError(("cannot assign {} to gpio{:d}.when_held:"
                                   + " already assigned").format(
                                       fn_type, gpio))
-            btn.when_held = lambda: fn()
+            btn.when_held = lambda btn: self.on_held(btn, fn)
 
         self.logger.info("{} assigned to gpio{:d}.{}".format(
             fn_type, gpio, action))
+
+    def on_held(self, btn, fn):
+        """
+        Wrapper around a buttons when_held fn.
+
+        :param btn: the button that was held
+        :param fn: the function to wrap
+        """
+        btn.was_held = True
+        self.logger.debug("{} is held".format(btn))
+        fn()
+
+    def on_released(self, btn, fn):
+        """
+        Wrapper around a buttons when_released fn. Only executes the wrapped
+        function when the button does not have a when_held function or the
+        button was not held previously.
+
+        :param btn: the button that was released
+        :param fn: the function to wrap
+        """
+        if btn.was_held:
+            btn.was_held = False
+            self.logger.debug("{} is released but was held".format(btn))
+        else:
+            self.logger.debug("{} is released and was not held".format(btn))
+            fn()
