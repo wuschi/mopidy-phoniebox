@@ -125,7 +125,7 @@ class PhonieboxControls:
         else:
             self.core.playback.next()
 
-    def volume_up(self):
+    def volume_up(self, vol_step=5):
         """
         Increase the volume by 5.
         """
@@ -135,11 +135,11 @@ class PhonieboxControls:
         if volume is None:
             volume = 50
 
-        volume += 5
+        volume += vol_step
         volume = min(volume, 100)
         self.core.mixer.set_volume(volume)
 
-    def volume_down(self):
+    def volume_down(self, vol_step=5):
         """
         Decrease the volume by 5.
         """
@@ -149,6 +149,6 @@ class PhonieboxControls:
         if volume is None:
             volume = 50
 
-        volume -= 5
+        volume -= vol_step
         volume = max(volume, 0)
         self.core.mixer.set_volume(volume)

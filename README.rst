@@ -33,6 +33,18 @@ Example Configuration
         # shut down phoniebox after not playing for 10 minutes
         idle_time_before_shutdown = 10
 
+        # configure GPIO 13 as pulled high with 50 ms debounce time, 0.5 seconds hold time. repeat when_held every 0.5s while held
+        gpio13 = pull_up,50,0.5,true
+        # when GPIO 13 is held, decrease the volume by 7
+        gpio13.when_held = vol_down,vol_step=7
+        # when GPIO 13 is released (and was not held), decrease the volume by 10
+        gpio13.when_released = vol_down,vol_step=10
+        # configure GPIO 19 as pulled high with 50 ms debounce time, 0.5 seconds hold time. repeat when_held every 0.5s while held
+        gpio19 = pull_up,50,0.5,true
+        # when GPIO 19 is held, increase the volume by 7
+        gpio19.when_held = vol_up,vol_step=7
+        # when GPIO 19 is released (and was not held), increase the volume by 10
+        gpio19.when_released = vol_up,vol_step=10
         # configure GPIO 20 as pulled high with 50 ms debounce time
         gpio20 = pull_up,50
         # when GPIO 20 is pressed, jump to previous track (CD-player style)
@@ -72,8 +84,9 @@ Configuration Options
     ``hold_repeat=[true|false]``
         **Optional**. If ``true``, then the ``when_held`` function assigned to the GPIO is triggered every ``hold_time`` seconds while held. If ``false`` (the default) the ``when_held`` function will only be triggered once per hold.
 
-``gpio<N>.when_pressed=<function_type>`` / ``gpio<N>.when_released=<function_type>`` / ``gpio<N>.when_held=<function_type>``
+``gpio<N>.when_pressed=<function_type>[,param=value...]`` / ``gpio<N>.when_released=<function_type>[,param=value...]`` / ``gpio<N>.when_held=<function_type>[,param=value...]``
     Configure the GPIO pin number ``<N>`` function type when the button is pressed / released / held. The ``when_released`` function is only executed when there is no ``when_held`` function assigned to the same button or when the button was not held before being released.
+    Some ``<function_type>`` take optional ``param=value`` pairs, separated by comma.
     Valid values for ``<function_type>`` are:
 
     ``shutdown``
@@ -92,10 +105,10 @@ Configuration Options
         Jump to next track.
 
     ``vol_down``
-        Decrease playback volume.
+        Decrease playback volume. The percentage the volume should be decreased with a single call can be passed in the argument ``vol_step``.
 
     ``vol_down``
-        Increase playback volume.
+        Increase playback volume. The percentage the volume should be increased with a single call can be passed in the argument ``vol_step``.
 
 
 License

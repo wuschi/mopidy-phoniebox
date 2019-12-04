@@ -20,6 +20,7 @@ import os
 
 from mopidy import config, ext
 
+from .functionconfig import FunctionConfig
 from .gpioconfig import GpioConfig
 
 
@@ -51,12 +52,9 @@ class Extension(ext.Extension):
         schema['idle_time_before_shutdown'] = config.Integer()
         for gpio in range(28):
             schema['gpio{:d}'.format(gpio)] = GpioConfig()
-            schema['gpio{:d}.when_pressed'.format(gpio)] = config.String(
-                    optional=True)
-            schema['gpio{:d}.when_released'.format(gpio)] = config.String(
-                    optional=True)
-            schema['gpio{:d}.when_held'.format(gpio)] = config.String(
-                    optional=True)
+            schema['gpio{:d}.when_pressed'.format(gpio)] = FunctionConfig()
+            schema['gpio{:d}.when_released'.format(gpio)] = FunctionConfig()
+            schema['gpio{:d}.when_held'.format(gpio)] = FunctionConfig()
 
         return schema
 

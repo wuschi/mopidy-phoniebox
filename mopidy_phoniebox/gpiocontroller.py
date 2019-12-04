@@ -31,7 +31,7 @@ class GpioController:
 
     def __init__(self, config, controls):
         self.config = config
-        self.controls = controls
+        self.controls = GpioControls(controls)
         self.gpios = [None] * 28
 
         self.fn_mapping = {
@@ -102,21 +102,23 @@ class GpioController:
 
         key = "gpio{:d}.{}".format(gpio, action)
         try:
-            fn_type = self.config[key]
+            fn_conf = self.config[key]
         except KeyError:
-            fn_type = None
+            fn_conf = None
 
-        if fn_type is None:
+        if fn_conf is None:
             return
 
         try:
-            fn = self.fn_mapping[fn_type.strip()]
+            fn = self.fn_mapping[fn_conf.fn_type.strip()]
         except KeyError:
             raise ValueError(
                     "cannot assign gpio{:d}.{}: unknown fn type '{}'".format(
-                        gpio, action, fn_type))
+                        gpio, action, fn_conf.fn_type))
 
         btn = self.gpios[gpio]
+        fn_type = fn_conf.fn_type
+        fn_args = fn_conf.fn_args
         if btn is None:
             raise ValueError(("cannot configure {:d}.{}"
                               + " - gpio{:d} not configured").format(
@@ -127,24 +129,24 @@ class GpioController:
                 raise ValueError(("cannot assign {} to gpio{:d}.when_pressed:"
                                   + " already assigned").format(
                                       fn_type, gpio))
-            btn.when_pressed = lambda: fn()
+            btn.when_pressed = lambda: fn(**fn_args)
         elif action == 'when_released':
             if btn.when_released is not None:
                 raise ValueError(("cannot assign {} to gpio{:d}.when_released:"
                                   + " already assigned").format(
                                       fn_type, gpio))
-            btn.when_released = lambda btn: self.on_released(btn, fn)
+            btn.when_released = lambda bt: self.on_released(bt, fn, **fn_args)
         elif action == 'when_held':
             if btn.when_held is not None:
                 raise ValueError(("cannot assign {} to gpio{:d}.when_held:"
                                   + " already assigned").format(
                                       fn_type, gpio))
-            btn.when_held = lambda btn: self.on_held(btn, fn)
+            btn.when_held = lambda bt: self.on_held(bt, fn, **fn_args)
 
         self.logger.info("{} assigned to gpio{:d}.{}".format(
             fn_type, gpio, action))
 
-    def on_held(self, btn, fn):
+    def on_held(self, btn, fn, **fn_args):
         """
         Wrapper around a buttons when_held fn.
 
@@ -153,9 +155,9 @@ class GpioController:
         """
         btn.was_held = True
         self.logger.debug("{} is held".format(btn))
-        fn()
+        fn(**fn_args)
 
-    def on_released(self, btn, fn):
+    def on_released(self, btn, fn, **fn_args):
         """
         Wrapper around a buttons when_released fn. Only executes the wrapped
         function when the button does not have a when_held function or the
@@ -169,4 +171,74 @@ class GpioController:
             self.logger.debug("{} is released but was held".format(btn))
         else:
             self.logger.debug("{} is released and was not held".format(btn))
-            fn()
+            fn(**fn_args)
+
+
+class GpioControls():
+    """
+    Wrapper around the `PhonieboxControls` which accepts `**kwargs` in it's
+    methods for passing optional parameters.
+    """
+
+    controls = None
+
+    def __init__(self, controls):
+        self.controls = controls
+
+    def shutdown(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.shutdown()`. No optional parameters accepted.
+        """
+        self.controls.shutdown()
+
+    def play_pause(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.play_pause()`. No optional parameters
+        accepted.
+        """
+        self.controls.play_pause()
+
+    def cd_previous(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.cd_previous()`. No optional parameters
+        accepted.
+        """
+        self.controls.cd_previous()
+
+    def previous(self, **kwargs):
+        """
+        Wraps `PhonieControls.previous()`. No optional parameters accepted.
+        """
+        self.controls.previous()
+
+    def next(self, **kwargs):
+        """
+        Wraps `PhonieControls.next()`. No optional parameters accepted.
+        """
+        self.controls.next()
+
+    def volume_down(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.volume_down()`. Uses the following optional
+        parameters:
+
+        - `vol_step`: The percentage to decrease the volume by.
+        """
+        try:
+            vol_step = kwargs['vol_step']
+            self.controls.volume_down(vol_step)
+        except KeyError:
+            self.controls.volume_down()
+
+    def volume_up(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.volume_up()`. Uses the following optional
+        parameters:
+
+        - `vol_step`: The percentage to increase the volume by.
+        """
+        try:
+            vol_step = kwargs['vol_step']
+            self.controls.volume_up(vol_step)
+        except KeyError:
+            self.controls.volume_up()

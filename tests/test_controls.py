@@ -222,6 +222,11 @@ class PhonieboxControlsTest(unittest.TestCase):
         core.mixer.set_volume.assert_called_with(85)
 
         core.reset_mock()
+        future_vol.get.return_value = 80
+        ctrls.volume_up(vol_step=3)
+        core.mixer.set_volume.assert_called_with(83)
+
+        core.reset_mock()
         future_vol.get.return_value = 100
         ctrls.volume_up()
         core.mixer.set_volume.assert_called_with(100)
@@ -240,6 +245,11 @@ class PhonieboxControlsTest(unittest.TestCase):
         future_vol.get.return_value = 80
         ctrls.volume_down()
         core.mixer.set_volume.assert_called_with(75)
+
+        core.reset_mock()
+        future_vol.get.return_value = 80
+        ctrls.volume_down(vol_step=1)
+        core.mixer.set_volume.assert_called_with(79)
 
         core.reset_mock()
         future_vol.get.return_value = 0

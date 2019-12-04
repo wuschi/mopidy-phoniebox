@@ -23,7 +23,7 @@ from gpiozero.pins.mock import MockFactory
 
 import mock
 
-from mopidy_phoniebox import GpioConfig
+from mopidy_phoniebox import FunctionConfig, GpioConfig
 from mopidy_phoniebox.gpiocontroller import GpioController
 
 
@@ -49,8 +49,10 @@ class GpioControllerTest(unittest.TestCase):
 
         Device.pin_factory.reset()
         controls.reset_mock()
-        config = {'gpio27': GpioConfig().deserialize("pull_up"),
-                  'gpio27.when_pressed': 'play_pause'}
+        config = {
+            'gpio27': GpioConfig().deserialize("pull_up"),
+            'gpio27.when_pressed': FunctionConfig().deserialize('play_pause')
+        }
         controller = GpioController(config, controls)
         for gpio in range(27):
             self.assertIsNone(controller.gpios[gpio])
@@ -69,8 +71,10 @@ class GpioControllerTest(unittest.TestCase):
 
         Device.pin_factory.reset()
         controls.reset_mock()
-        config = {'gpio27': GpioConfig().deserialize("pull_up"),
-                  'gpio27.when_held': 'play_pause'}
+        config = {
+            'gpio27': GpioConfig().deserialize("pull_up"),
+            'gpio27.when_held': FunctionConfig().deserialize('play_pause')
+        }
         controller = GpioController(config, controls)
         for gpio in range(27):
             self.assertIsNone(controller.gpios[gpio])
@@ -96,8 +100,10 @@ class GpioControllerTest(unittest.TestCase):
 
         Device.pin_factory.reset()
         controls.reset_mock()
-        config = {'gpio27': GpioConfig().deserialize(''),
-                  'gpio27.when_held': 'play_pause'}
+        config = {
+            'gpio27': GpioConfig().deserialize(''),
+            'gpio27.when_held': FunctionConfig().deserialize('play_pause')
+        }
         controller = GpioController(config, controls)
         for gpio in range(27):
             self.assertIsNone(controller.gpios[gpio])
@@ -368,7 +374,9 @@ class GpioControllerTest(unittest.TestCase):
 
         Device.pin_factory.reset()
         controller.gpios = [None] * 28
-        controller.config = {'gpio27.when_pressed': 'play_pause'}
+        controller.config = {
+            'gpio27.when_pressed': FunctionConfig().deserialize('play_pause')
+        }
         controller.configure_button(27, 'when_held')
         with self.assertRaises(ValueError):
             controller.configure_button(27, 'when_pressed')
@@ -376,14 +384,18 @@ class GpioControllerTest(unittest.TestCase):
         Device.pin_factory.reset()
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
-        controller.config = {'gpio0.when_pressed': 'unknown_fn'}
+        controller.config = {
+            'gpio0.when_pressed': FunctionConfig().deserialize('unknown_fn')
+        }
         with self.assertRaises(ValueError):
             controller.configure_button(0, 'when_pressed')
 
         Device.pin_factory.reset()
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
-        controller.config = {'gpio0.when_pressed': 'play_pause'}
+        controller.config = {
+            'gpio0.when_pressed': FunctionConfig().deserialize('play_pause')
+        }
         controller.configure_button(0, 'when_pressed')
         self.assertIsNotNone(controller.gpios[0].when_pressed)
 
@@ -391,14 +403,18 @@ class GpioControllerTest(unittest.TestCase):
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
         controller.gpios[0].when_pressed = lambda x: x
-        controller.config = {'gpio0.when_pressed': 'play_pause'}
+        controller.config = {
+            'gpio0.when_pressed': FunctionConfig().deserialize('play_pause')
+        }
         with self.assertRaises(ValueError):
             controller.configure_button(0, 'when_pressed')
 
         Device.pin_factory.reset()
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
-        controller.config = {'gpio0.when_held': ' play_pause '}
+        controller.config = {
+            'gpio0.when_held': FunctionConfig().deserialize(' play_pause ')
+        }
         controller.configure_button(0, 'when_held')
         self.assertIsNotNone(controller.gpios[0].when_held)
 
@@ -406,14 +422,18 @@ class GpioControllerTest(unittest.TestCase):
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
         controller.gpios[0].when_held = lambda x: x
-        controller.config = {'gpio0.when_held': 'play_pause'}
+        controller.config = {
+            'gpio0.when_held': FunctionConfig().deserialize('play_pause')
+        }
         with self.assertRaises(ValueError):
             controller.configure_button(0, 'when_held')
 
         Device.pin_factory.reset()
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
-        controller.config = {'gpio0.when_released': ' play_pause '}
+        controller.config = {
+            'gpio0.when_released': FunctionConfig().deserialize(' play_pause ')
+        }
         controller.configure_button(0, 'when_released')
         self.assertIsNotNone(controller.gpios[0].when_released)
 
@@ -421,7 +441,9 @@ class GpioControllerTest(unittest.TestCase):
         controller.gpios = [None] * 28
         controller.gpios[0] = Button(0)
         controller.gpios[0].when_released = lambda x: x
-        controller.config = {'gpio0.when_released': 'play_pause'}
+        controller.config = {
+            'gpio0.when_released': FunctionConfig().deserialize('play_pause')
+        }
         with self.assertRaises(ValueError):
             controller.configure_button(0, 'when_released')
 
@@ -454,3 +476,74 @@ class GpioControllerTest(unittest.TestCase):
         controller.on_released(btn, controls.some_fn)
         self.assertFalse(btn.was_held)
         controls.some_fn.assert_not_called()
+
+    def test_gpiocontrols_volume_up(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.volume_up(**args)
+        controls.volume_up.assert_called_once()
+
+        args = {'vol_step': 3}
+        controller.controls.volume_up(**args)
+        controls.volume_up.assert_called_with(3)
+
+    def test_gpiocontrols_volume_down(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.volume_down(**args)
+        controls.volume_down.assert_called_once()
+
+        args = {'vol_step': 3}
+        controller.controls.volume_down(**args)
+        controls.volume_down.assert_called_with(3)
+
+    def test_gpiocontrols_shutdown(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.shutdown(**args)
+        controls.shutdown.assert_called_once()
+
+    def test_gpiocontrols_play_pause(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.play_pause(**args)
+        controls.play_pause.assert_called_once()
+
+    def test_gpiocontrols_cd_previous(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.cd_previous(**args)
+        controls.cd_previous.assert_called_once()
+
+    def test_gpiocontrols_previous(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.previous(**args)
+        controls.previous.assert_called_once()
+
+    def test_gpiocontrols_next(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.next(**args)
+        controls.next.assert_called_once()
