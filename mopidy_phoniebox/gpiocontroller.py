@@ -40,8 +40,11 @@ class GpioController:
             "cdprev": self.controls.cd_previous,
             "prev": self.controls.previous,
             "next": self.controls.next,
+            "seek_bwd": self.controls.seek_bwd,
+            "seek_fwd": self.controls.seek_fwd,
             "vol_down": self.controls.volume_down,
-            "vol_up": self.controls.volume_up
+            "vol_up": self.controls.volume_up,
+            "mute": self.controls.mute_unmute
         }
         self.configure_gpios()
         self.configure_buttons()
@@ -217,6 +220,32 @@ class GpioControls():
         """
         self.controls.next()
 
+    def seek_bwd(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.seek_bwd()`. Uses the following optional
+        parameters:
+
+        - `seconds`: The number of seconds to seek backwards
+        """
+        try:
+            seconds = kwargs['seconds']
+            self.controls.seek_bwd(seconds)
+        except KeyError:
+            self.controls.seek_bwd()
+
+    def seek_fwd(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.seek_fwd()`. Uses the following optional
+        parameters:
+
+        - `seconds`: The number of seconds to seek forwards
+        """
+        try:
+            seconds = kwargs['seconds']
+            self.controls.seek_fwd(seconds)
+        except KeyError:
+            self.controls.seek_fwd()
+
     def volume_down(self, **kwargs):
         """
         Wraps `PhonieboxControls.volume_down()`. Uses the following optional
@@ -242,3 +271,10 @@ class GpioControls():
             self.controls.volume_up(vol_step)
         except KeyError:
             self.controls.volume_up()
+
+    def mute_unmute(self, **kwargs):
+        """
+        Wraps `PhonieboxControls.mute_unmute()`. No optional parameters
+        accepted.
+        """
+        self.controls.mute_unmute()

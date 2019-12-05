@@ -125,6 +125,29 @@ class PhonieboxControls:
         else:
             self.core.playback.next()
 
+    def seek_bwd(self, seconds=5):
+        """
+        Seek backward by the given number of seconds.
+        """
+        pos = self.core.playback.get_time_position().get()
+        self.logger.info(
+            "PhonieboxControls.seek_bwd() - current pos {}".format(pos))
+        pos = pos - (seconds * 1000)
+        if (pos < 0):
+            pos = 0
+        self.core.playback.seek(pos)
+
+    def seek_fwd(self, seconds=5):
+        """
+        Seek forward by the given number of seconds.
+        """
+        pos = self.core.playback.get_time_position().get()
+        self.logger.info(
+            "PhonieboxControls.seek_fwd() - current pos {}".format(pos))
+        pos = pos + (seconds * 1000)
+
+        self.core.playback.seek(pos)
+
     def volume_up(self, vol_step=5):
         """
         Increase the volume by 5.
@@ -152,3 +175,16 @@ class PhonieboxControls:
         volume -= vol_step
         volume = max(volume, 0)
         self.core.mixer.set_volume(volume)
+
+    def mute_unmute(self):
+        """
+        Mute/unmute mopidy.
+        """
+        mute = self.core.mixer.get_mute().get()
+        self.logger.info(
+            "PhonieboxControls.mute_unmute() - current is {}".format(mute))
+        if mute is None or mute is True:
+            mute = False
+        else:
+            mute = True
+        self.core.mixer.set_mute(mute)

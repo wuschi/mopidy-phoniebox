@@ -104,12 +104,20 @@ Configuration Options
     ``next``
         Jump to next track.
 
-    ``vol_down``
-        Decrease playback volume. The percentage the volume should be decreased with a single call can be passed in the argument ``vol_step``.
+    ``seek_bwd``
+        Seek backward. The number of seconds to seek by can be passed in the argument ``seconds`` (default is ``5``).
+
+    ``seek_fwd``
+        Seek forward. The number of seconds to seek by can be passed in the argument ``seconds`` (default is ``5``).
 
     ``vol_down``
-        Increase playback volume. The percentage the volume should be increased with a single call can be passed in the argument ``vol_step``.
+        Decrease playback volume. The percentage the volume should be decreased with a single call can be passed in the argument ``vol_step`` (default is ``5``).
 
+    ``vol_up``
+        Increase playback volume. The percentage the volume should be increased with a single call can be passed in the argument ``vol_step`` (default is ``5``).
+
+    ``mute``
+        Mute/unmute playback volume.
 
 License
 =============

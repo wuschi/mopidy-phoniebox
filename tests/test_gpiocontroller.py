@@ -503,6 +503,15 @@ class GpioControllerTest(unittest.TestCase):
         controller.controls.volume_down(**args)
         controls.volume_down.assert_called_with(3)
 
+    def test_gpiocontrols_mute_unmute(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.mute_unmute(**args)
+        controls.mute_unmute.assert_called_once()
+
     def test_gpiocontrols_shutdown(self):
         config = {}
         controls = mock.Mock()
@@ -547,3 +556,29 @@ class GpioControllerTest(unittest.TestCase):
         args = {}
         controller.controls.next(**args)
         controls.next.assert_called_once()
+
+    def test_gpiocontrols_seek_bwd(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.seek_bwd(**args)
+        controls.seek_bwd.assert_called_once()
+
+        args = {'seconds': 3}
+        controller.controls.seek_bwd(**args)
+        controls.seek_bwd.assert_called_with(3)
+
+    def test_gpiocontrols_seek_fwd(self):
+        config = {}
+        controls = mock.Mock()
+        controller = GpioController(config, controls)
+
+        args = {}
+        controller.controls.seek_fwd(**args)
+        controls.seek_fwd.assert_called_once()
+
+        args = {'seconds': 3}
+        controller.controls.seek_fwd(**args)
+        controls.seek_fwd.assert_called_with(3)

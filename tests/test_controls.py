@@ -206,6 +206,46 @@ class PhonieboxControlsTest(unittest.TestCase):
         core.playback.next.assert_not_called()
         core.playback.play.assert_not_called()
 
+    def test_seek_bwd(self):
+        core = mock.Mock()
+        future_pos = mock.Mock()
+        core.playback.get_time_position.return_value = future_pos
+
+        ctrls = PhonieboxControls(core)
+        future_pos.get.return_value = 6000
+        ctrls.seek_bwd()
+        core.playback.seek.assert_called_with(1000)
+
+        core.reset_mock()
+        future_pos.get.return_value = 1000
+        ctrls.seek_bwd()
+        core.playback.seek.assert_called_with(0)
+
+        core.reset_mock()
+        future_pos.get.return_value = 10000
+        ctrls.seek_bwd(seconds=3)
+        core.playback.seek.assert_called_with(7000)
+
+    def test_seek_fwd(self):
+        core = mock.Mock()
+        future_pos = mock.Mock()
+        core.playback.get_time_position.return_value = future_pos
+
+        ctrls = PhonieboxControls(core)
+        future_pos.get.return_value = 6000
+        ctrls.seek_fwd()
+        core.playback.seek.assert_called_with(11000)
+
+        core.reset_mock()
+        future_pos.get.return_value = 0
+        ctrls.seek_fwd()
+        core.playback.seek.assert_called_with(5000)
+
+        core.reset_mock()
+        future_pos.get.return_value = 10000
+        ctrls.seek_fwd(seconds=3)
+        core.playback.seek.assert_called_with(13000)
+
     def test_volume_up(self):
         core = mock.Mock()
         future_vol = mock.Mock()
@@ -255,6 +295,26 @@ class PhonieboxControlsTest(unittest.TestCase):
         future_vol.get.return_value = 0
         ctrls.volume_down()
         core.mixer.set_volume.assert_called_with(0)
+
+    def test_mute_unmute(self):
+        core = mock.Mock()
+        future_muted = mock.Mock()
+        core.mixer.get_mute.return_value = future_muted
+
+        ctrls = PhonieboxControls(core)
+        future_muted.get.return_value = None
+        ctrls.mute_unmute()
+        core.mixer.set_mute.assert_called_with(False)
+
+        core.reset_mock()
+        future_muted.get.return_value = False
+        ctrls.mute_unmute()
+        core.mixer.set_mute.assert_called_with(True)
+
+        core.reset_mock()
+        future_muted.get.return_value = True
+        ctrls.mute_unmute()
+        core.mixer.set_mute.assert_called_with(False)
 
     def test_shutdown(self):
         core = mock.Mock()
